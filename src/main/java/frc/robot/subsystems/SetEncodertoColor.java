@@ -47,7 +47,7 @@ public class SetEncodertoColor extends SubsystemBase {
     _motor.setInverted(true);
   }
   public void blue() {
-    setpoint = 90; //degree to set encoder to
+    setpoint = 30; //degree to set encoder to
     
     
 
@@ -75,7 +75,7 @@ public class SetEncodertoColor extends SubsystemBase {
   }
 
   public void red(){
-    setpoint = 25;
+    setpoint = 60;
    
     
 
@@ -131,7 +131,7 @@ public class SetEncodertoColor extends SubsystemBase {
 
   }
   public void green(){
-    setpoint=100;
+    setpoint=25;
    
     
 
@@ -158,10 +158,18 @@ public class SetEncodertoColor extends SubsystemBase {
     lastError = error;
 
   }
+public void setTo0(){
+  setpoint=0;
+   
 
-  public void encoderSet(double setpoint){
- 
-  }
+
+  // output to motors
+  _motor.set(0);
+
+  // update last- variables
+
+}
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

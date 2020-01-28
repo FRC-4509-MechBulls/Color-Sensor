@@ -152,6 +152,7 @@ public class Robot extends TimedRobot {
 
     } else {
       colorString = "Unknown";
+      encoderColor.setTo0();
     }
     SmartDashboard.putString("Color Detected", colorString);
   }
