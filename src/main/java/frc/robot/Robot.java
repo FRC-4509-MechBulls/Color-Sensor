@@ -47,22 +47,10 @@ public class Robot extends TimedRobot {
    * This object uses a simple euclidian distance to estimate the closest match
    * with given confidence range.
    */
-  private final ColorMatch colorMatcher = new ColorMatch();
 
-  /**
-   * Note: Any example colors should be calibrated as the user needs, these
-   * are here as a basic example.
-   */
-  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
-  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
-  private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
-  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
   @Override
   public void robotInit() {
-    colorMatcher.addColorMatch(kBlueTarget);
-    colorMatcher.addColorMatch(kGreenTarget);
-    colorMatcher.addColorMatch(kRedTarget);
-    colorMatcher.addColorMatch(kYellowTarget);    
+     
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -128,33 +116,17 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Color detectedColor = colorSensor.getColor();
+    SmartDashboard.putNumber("Red", detectedColor.red);
+    SmartDashboard.putNumber("Green", detectedColor.green);
+    SmartDashboard.putNumber("Blue", detectedColor.blue);
+    int proximity = colorSensor.getProximity();
 
+    SmartDashboard.putNumber("Proximity", proximity);
     /**
      * Run the color match algorithm on our detected color
      */
     String colorString;
-    ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
-
-    if (match.color == kBlueTarget) {
-      colorString = "Blue";
-      encoderColor.blue();
-
-    } else if (match.color == kRedTarget) {
-      colorString = "Red";
-      encoderColor.red();
-    } else if (match.color == kGreenTarget) {
-      colorString = "Green";
-      encoderColor.green();
-
-    } else if (match.color == kYellowTarget) {
-      colorString = "Yellow";
-      encoderColor.yellow();
-
-    } else {
-      colorString = "Unknown";
-      encoderColor.setTo0();
-    }
-    SmartDashboard.putString("Color Detected", colorString);
+   
   }
 
   /**
