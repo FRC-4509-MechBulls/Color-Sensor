@@ -9,8 +9,13 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
+import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SetEncodertoColor extends SubsystemBase {
@@ -18,7 +23,23 @@ public class SetEncodertoColor extends SubsystemBase {
    * Creates a new SetEncodertoColor.
    */
   public static WPI_TalonSRX _motor = new WPI_TalonSRX(2);
+  public static WPI_TalonSRX _motor2 = new WPI_TalonSRX(3);
 
+  private final I2C.Port i2cPort = I2C.Port.kOnboard;
+  private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+
+  private final ColorMatch colorMatcher = new ColorMatch();
+  Color detectedColor = colorSensor.getColor();
+  double IR = colorSensor.getIR();
+
+  /**
+   * Note: Any example colors should be calibrated as the user needs, these
+   * are here as a basic example.
+   */
+  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+  private final Color kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
   public static final double kP = 0.5;
   public static final double kI = 0.4;
   public static final double kD = 0.1;
@@ -34,142 +55,54 @@ public class SetEncodertoColor extends SubsystemBase {
 
   }
   public void init(){
-    _motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-    _motor.configOpenloopRamp(0.2);
-    _motor.configClosedloopRamp(0.2);
-    // Talon setup. Setting up + and - output for max and nominal.
-    // These should never really change
-    _motor.configNominalOutputForward(0, 0);
-    _motor.configNominalOutputReverse(0, 0);
-    _motor.configPeakOutputForward(1, 0);
-    _motor.configPeakOutputReverse(-1, 0);
-    _motor.setSensorPhase(true);
-    _motor.setInverted(true);
-  }
-  public void blue() {
-    setpoint = 30; //degree to set encoder to
-    
-    
-
-    // get sensor position
-    double sensorPosition = _motor.getSelectedSensorPosition(0) * kDriveTick2Feet;
-
-    // calculations
-    double error = setpoint - sensorPosition;
-    double dt = Timer.getFPGATimestamp() - lastTimestamp;
-
-    if (Math.abs(error) < iLimit) {
-      errorSum += error * dt;
-
-    }
-    double errorRate = (error - lastError) / dt;
-
-    double outputSpeed = kP * error + kI * errorSum + kD * errorRate;
-
-    // output to motors
-    _motor.set(outputSpeed);
-
-    // update last- variables
-    lastTimestamp = Timer.getFPGATimestamp();
-    lastError = error;
+    // _motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    // _motor.configOpenloopRamp(0.2);
+    // _motor.configClosedloopRamp(0.2);
+    // // Talon setup. Setting up + and - output for max and nominal.
+    // // These should never really change
+    // _motor.configNominalOutputForward(0, 0);
+    // _motor.configNominalOutputReverse(0, 0);
+    // _motor.configPeakOutputForward(1, 0);
+    // _motor.configPeakOutputReverse(-1, 0);
+    // _motor.setSensorPhase(true);
+    // _motor.setInverted(true);
   }
 
-  public void red(){
-    setpoint = 60;
-   
+public void encoder(){
+  _motor.set(0.75);
+  colorMatcher.setConfidenceThreshold(0.01);
+  colorMatcher.addColorMatch(kBlueTarget);
+  colorMatcher.addColorMatch(kGreenTarget);
+  colorMatcher.addColorMatch(kRedTarget);
+  colorMatcher.addColorMatch(kYellowTarget);   
+  Color detectedColor = colorSensor.getColor();
+
+  int proximity = colorSensor.getProximity();
+
+  /**
+   * Run the color match algorithm on our detected color
+   */
+  String colorString;
+  ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
+
+  colorMatcher.matchClosestColor(detectedColor);
+  if (match.color == kBlueTarget) {
+    colorString = "Blue"; 
+    _motor.set(0);
     
-
-    // get sensor position
-    double sensorPosition = _motor.getSelectedSensorPosition(0) * kDriveTick2Feet;
-
-    // calculations
-    double error = setpoint - sensorPosition;
-    double dt = Timer.getFPGATimestamp() - lastTimestamp;
-
-    if (Math.abs(error) < iLimit) {
-      errorSum += error * dt;
-
-    }
-    double errorRate = (error - lastError) / dt;
-
-    double outputSpeed = kP * error + kI * errorSum + kD * errorRate;
-
-    // output to motors
-    _motor.set(outputSpeed);
-
-    // update last- variables
-    lastTimestamp = Timer.getFPGATimestamp();
-    lastError = error;
-
-  }
-  public void yellow(){
-    setpoint = 50;
-   
+  } else if (match.color == kRedTarget) {
+    colorString = "Red";
     
+  } else if (match.color == kGreenTarget) {
+    colorString = "Green";
 
-    // get sensor position
-    double sensorPosition = _motor.getSelectedSensorPosition(0) * kDriveTick2Feet;
+  } else if (match.color == kYellowTarget) {
+    colorString = "Yellow";
 
-    // calculations
-    double error = setpoint - sensorPosition;
-    double dt = Timer.getFPGATimestamp() - lastTimestamp;
-
-    if (Math.abs(error) < iLimit) {
-      errorSum += error * dt;
-
-    }
-    double errorRate = (error - lastError) / dt;
-
-    double outputSpeed = kP * error + kI * errorSum + kD * errorRate;
-
-    // output to motors
-    _motor.set(outputSpeed);
-
-    // update last- variables
-    lastTimestamp = Timer.getFPGATimestamp();
-    lastError = error;
-
+  } else {
+    colorString = "Unknown";
   }
-  public void green(){
-    setpoint=25;
-   
-    
-
-    // get sensor position
-    double sensorPosition = _motor.getSelectedSensorPosition(0) * kDriveTick2Feet;
-
-    // calculations
-    double error = setpoint - sensorPosition;
-    double dt = Timer.getFPGATimestamp() - lastTimestamp;
-
-    if (Math.abs(error) < iLimit) {
-      errorSum += error * dt;
-
-    }
-    double errorRate = (error - lastError) / dt;
-
-    double outputSpeed = kP * error + kI * errorSum + kD * errorRate;
-
-    // output to motors
-    _motor.set(outputSpeed);
-
-    // update last- variables
-    lastTimestamp = Timer.getFPGATimestamp();
-    lastError = error;
-
-  }
-public void setTo0(){
-  setpoint=0;
-   
-
-
-  // output to motors
-  _motor.set(0);
-
-  // update last- variables
-
 }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

@@ -3,8 +3,8 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.SetEncoderCommand;
 import frc.robot.commands.TurnOffEncoderCommand;
+import frc.robot.subsystems.SetEncodertoColor;
 
 
 public class RobotContainer {
@@ -13,7 +13,7 @@ public class RobotContainer {
     XboxController controller2 = new XboxController(Constants.XBOX_CONTROLLER_2_PORT);
     XboxController controller1 = new XboxController(Constants.XBOX_CONTROLLER_1_PORT);
 
-
+    SetEncodertoColor setEncoder = new SetEncodertoColor();
     public RobotContainer(){
         configureButtonBindings();
 
@@ -22,10 +22,9 @@ public class RobotContainer {
 
 
     private void configureButtonBindings() {
-        final JoystickButton encoderButton = new JoystickButton(controller2, XboxController.Button.kY.value);
+        final JoystickButton encoderButton = new JoystickButton(controller1, XboxController.Button.kY.value);
         
-        encoderButton.whenPressed(new SetEncoderCommand());
-        encoderButton.whenReleased(new TurnOffEncoderCommand());
+        encoderButton.whenPressed(new TurnOffEncoderCommand(setEncoder));
     }
   
   

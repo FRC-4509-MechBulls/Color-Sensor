@@ -10,13 +10,18 @@ package frc.robot;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.TurnOffEncoderCommand;
 import frc.robot.subsystems.SetEncodertoColor;
 
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorMatch;
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +44,8 @@ public class Robot extends TimedRobot {
    * parameters.
    */
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+  public static RobotContainer oi;
+
 
   /**
    * A Rev Color Match object is used to register and detect known colors. This can 
@@ -50,16 +57,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-     
+    Robot.oi = new RobotContainer();
+
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    encoderColor.init();
-    encoderColor.errorSum = 0;
-    encoderColor.lastError = 0;
-    encoderColor.lastTimestamp = Timer.getFPGATimestamp();
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    encoderColor._motor.setSelectedSensorPosition(0, 0, 1000);
+   
   }
 
   /**
@@ -72,7 +75,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("encoder value", encoderColor._motor.getSelectedSensorPosition(0) * encoderColor.kDriveTick2Feet);
+    // SmartDashboard.putNumber("encoder value", encoderColor._motor.getSelectedSensorPosition(0) * encoderColor.kDriveTick2Feet);
 
   }
 
@@ -97,8 +100,10 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during autonomous.
    */
+SetEncodertoColor encoderSubsystem = new SetEncodertoColor();
   @Override
   public void autonomousPeriodic() {
+    // encoderSubsystem.encoder();
     switch (m_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
@@ -113,8 +118,16 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during operator control.
    */
+  SetEncodertoColor setEncoder = new SetEncodertoColor();
+  XboxController controller1 = new XboxController(Constants.XBOX_CONTROLLER_1_PORT);
+
   @Override
   public void teleopPeriodic() {
+    // final JoystickButton encoderButton = new JoystickButton(controller1, XboxController.Button.kY.value);
+        
+    // encoderButton.whenPressed(new TurnOffEncoderCommand(setEncoder));
+    CommandScheduler.getInstance().run();
+
     Color detectedColor = colorSensor.getColor();
     SmartDashboard.putNumber("Red", detectedColor.red);
     SmartDashboard.putNumber("Green", detectedColor.green);
@@ -125,7 +138,6 @@ public class Robot extends TimedRobot {
     /**
      * Run the color match algorithm on our detected color
      */
-    String colorString;
    
   }
 
