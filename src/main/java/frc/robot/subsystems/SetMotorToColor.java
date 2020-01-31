@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class SetEncodertoColor extends SubsystemBase {
+public class SetMotorToColor extends SubsystemBase {
   /**
-   * Creates a new SetEncodertoColor.
+   * Creates a new SetMotorToColor.
    */
   public static WPI_TalonSRX _motor = new WPI_TalonSRX(2);
   public static WPI_TalonSRX _motor2 = new WPI_TalonSRX(3);
@@ -52,7 +52,7 @@ public class SetEncodertoColor extends SubsystemBase {
   public static double lastError = 0;
   public static final double kDriveTick2Feet = 1.0 / 128 * 6 * Math.PI / 12;
 
-  public SetEncodertoColor() {
+  public SetMotorToColor() {
 
   }
   public void init(){
@@ -69,7 +69,7 @@ public class SetEncodertoColor extends SubsystemBase {
     // _motor.setInverted(true);
   }
 
-public void encoder(){
+public void identify(){
   colorMatcher.setConfidenceThreshold(0.01);
   colorMatcher.addColorMatch(kBlueTarget);
   colorMatcher.addColorMatch(kGreenTarget);

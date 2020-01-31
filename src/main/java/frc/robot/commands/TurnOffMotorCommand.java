@@ -15,16 +15,16 @@ import com.revrobotics.ColorSensorV3;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SetEncodertoColor;
+import frc.robot.subsystems.SetMotorToColor;
 
-public class TurnOffEncoderCommand extends CommandBase {
+public class TurnOffMotorCommand extends CommandBase {
   /**
-   * Creates a new TurnOffEncoderCommand.
+   * Creates a new TurnOffMotorCommand.
    */
-  SetEncodertoColor encoderSubsystem;
-  public TurnOffEncoderCommand(SetEncodertoColor subsystem) {
-    encoderSubsystem = subsystem;
-    addRequirements(encoderSubsystem);
+  SetMotorToColor controlPanelSubsystem;
+  public TurnOffMotorCommand(SetMotorToColor subsystem) {
+    controlPanelSubsystem = subsystem;
+    addRequirements(controlPanelSubsystem);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -36,7 +36,7 @@ public class TurnOffEncoderCommand extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    encoderSubsystem.encoder();
+    controlPanelSubsystem.identify();
  
   }
 
