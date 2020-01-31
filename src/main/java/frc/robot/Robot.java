@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.TurnOffEncoderCommand;
 import frc.robot.subsystems.SetEncodertoColor;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
@@ -123,9 +124,36 @@ SetEncodertoColor encoderSubsystem = new SetEncodertoColor();
 
   @Override
   public void teleopPeriodic() {
-    // final JoystickButton encoderButton = new JoystickButton(controller1, XboxController.Button.kY.value);
-        
-    // encoderButton.whenPressed(new TurnOffEncoderCommand(setEncoder));
+    String gameData;
+    gameData = DriverStation.getInstance().getGameSpecificMessage();
+    if (gameData.length() > 0) {
+      switch (gameData.charAt(0)) {
+      case 'B':
+        // Blue case code
+        SmartDashboard.putString("Blue", "B");
+        break;
+      case 'G':
+        // Green case code
+        SmartDashboard.putString("Green", "G");
+
+        break;
+      case 'R':
+        // Red case code
+        SmartDashboard.putString("Red", "R");
+
+        break;
+      case 'Y':
+        // Yellow case code
+        SmartDashboard.putString("Yellow", "Y");
+
+        break;
+      default:
+        // This is corrupt data
+        break;
+      }
+    } else {
+      // Code for no data received yet
+    }
     CommandScheduler.getInstance().run();
 
     Color detectedColor = colorSensor.getColor();

@@ -44,6 +44,7 @@ public class SetEncodertoColor extends SubsystemBase {
   public static final double kI = 0.4;
   public static final double kD = 0.1;
   public static final double iLimit = 1;
+  boolean stop = false;
 
   public static double setpoint = 0;
   public static double errorSum = 0;
@@ -69,14 +70,12 @@ public class SetEncodertoColor extends SubsystemBase {
   }
 
 public void encoder(){
-  _motor.set(0.75);
   colorMatcher.setConfidenceThreshold(0.01);
   colorMatcher.addColorMatch(kBlueTarget);
   colorMatcher.addColorMatch(kGreenTarget);
   colorMatcher.addColorMatch(kRedTarget);
   colorMatcher.addColorMatch(kYellowTarget);   
   Color detectedColor = colorSensor.getColor();
-
   int proximity = colorSensor.getProximity();
 
   /**
@@ -86,22 +85,33 @@ public void encoder(){
   ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
 
   colorMatcher.matchClosestColor(detectedColor);
+
   if (match.color == kBlueTarget) {
     colorString = "Blue"; 
     _motor.set(0);
+    stop=true;
     
-  } else if (match.color == kRedTarget) {
-    colorString = "Red";
-    
-  } else if (match.color == kGreenTarget) {
-    colorString = "Green";
+  } 
+  else if(match.color!=kBlueTarget){
+    _motor.set(0.75);
+    if(stop){
+      _motor.set(0.0);
+    }
 
-  } else if (match.color == kYellowTarget) {
-    colorString = "Yellow";
-
-  } else {
-    colorString = "Unknown";
   }
+  // else if (match.color == kRedTarget) {
+  //   colorString = "Red";
+    
+  // } else if (match.color == kGreenTarget) {
+  //   colorString = "Green";
+
+  // } else if (match.color == kYellowTarget) {
+  //   colorString = "Yellow";
+
+  // } else {
+  //   colorString = "Unknown";
+  // }
+
 }
   @Override
   public void periodic() {
