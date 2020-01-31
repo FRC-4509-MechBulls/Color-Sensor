@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.TurnOffEncoderCommand;
-import frc.robot.subsystems.SetEncodertoColor;
+import frc.robot.commands.TurnOffMotorCommand;
+import frc.robot.subsystems.SetMotorToColor;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import com.revrobotics.ColorSensorV3;
@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  SetEncodertoColor encoderColor = new SetEncodertoColor();
+  SetMotorToColor encoderColor = new SetMotorToColor();
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
 
   /**
@@ -101,10 +101,10 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during autonomous.
    */
-SetEncodertoColor encoderSubsystem = new SetEncodertoColor();
+SetMotorToColor controlPanelSubsystem = new SetMotorToColor();
   @Override
   public void autonomousPeriodic() {
-    // encoderSubsystem.encoder();
+    // controlPanelSubsystem.encoder();
     switch (m_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
@@ -119,7 +119,7 @@ SetEncodertoColor encoderSubsystem = new SetEncodertoColor();
   /**
    * This function is called periodically during operator control.
    */
-  SetEncodertoColor setEncoder = new SetEncodertoColor();
+  SetMotorToColor setEncoder = new SetMotorToColor();
   XboxController controller1 = new XboxController(Constants.XBOX_CONTROLLER_1_PORT);
 
   @Override
