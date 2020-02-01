@@ -64,7 +64,6 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     Robot.oi = new RobotContainer();
     controlPanelSubsystem.colorMatcher.setConfidenceThreshold(1.0);
-
     controlPanelSubsystem.colorMatcher.addColorMatch(kBlueTarget);
     controlPanelSubsystem.colorMatcher.addColorMatch(kGreenTarget);
     controlPanelSubsystem.colorMatcher.addColorMatch(kRedTarget);
