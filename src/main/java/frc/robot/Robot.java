@@ -24,6 +24,7 @@ import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatchResult;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorMatch;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -36,21 +37,24 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  SetMotorToColor encoderColor = new SetMotorToColor();
+  SetMotorToColor controlPanelSubsystem = new SetMotorToColor();
+
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
 
   /**
-   * A Rev Color Sensor V3 object is constructed with an I2C port as a 
-   * parameter. The device will be automatically initialized with default 
-   * parameters.
+   * A Rev Color Sensor V3 object is constructed with an I2C port as a parameter.
+   * The device will be automatically initialized with default parameters.
    */
+  private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+  private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+  private final Color kRedTarget = ColorMatch.makeColor(0.531, 0.343, 0.14);
+  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   public static RobotContainer oi;
 
-
   /**
-   * A Rev Color Match object is used to register and detect known colors. This can 
-   * be calibrated ahead of time or during operation.
+   * A Rev Color Match object is used to register and detect known colors. This
+   * can be calibrated ahead of time or during operation.
    * 
    * This object uses a simple euclidian distance to estimate the closest match
    * with given confidence range.
@@ -59,37 +63,46 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     Robot.oi = new RobotContainer();
+    controlPanelSubsystem.colorMatcher.setConfidenceThreshold(1.0);
 
+    controlPanelSubsystem.colorMatcher.addColorMatch(kBlueTarget);
+    controlPanelSubsystem.colorMatcher.addColorMatch(kGreenTarget);
+    controlPanelSubsystem.colorMatcher.addColorMatch(kRedTarget);
+    controlPanelSubsystem.colorMatcher.addColorMatch(kYellowTarget);
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-   
+
   }
 
   /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like diagnostics that you want ran during disabled, autonomous,
+   * teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and SmartDashboard integrated updating.
    */
   @Override
   public void robotPeriodic() {
-    // SmartDashboard.putNumber("encoder value", encoderColor._motor.getSelectedSensorPosition(0) * encoderColor.kDriveTick2Feet);
+    // SmartDashboard.putNumber("encoder value",
+    // controlPanelSubsystem._motor.getSelectedSensorPosition(0) *
+    // controlPanelSubsystem.kDriveTick2Feet);
 
   }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select
-   * between different autonomous modes using the dashboard. The sendable
-   * chooser code works with the Java SmartDashboard. If you prefer the
-   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
+   * between different autonomous modes using the dashboard. The sendable chooser
+   * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+   * remove all of the chooser code and uncomment the getString line to get the
+   * auto name from the text box below the Gyro
    *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure below with additional strings. If using the SendableChooser
+   * make sure to add them to the chooser code above as well.
    */
   @Override
   public void autonomousInit() {
@@ -101,26 +114,23 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during autonomous.
    */
-SetMotorToColor controlPanelSubsystem = new SetMotorToColor();
   @Override
   public void autonomousPeriodic() {
     // controlPanelSubsystem.encoder();
     switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    case kCustomAuto:
+      // Put custom auto code here
+      break;
+    case kDefaultAuto:
+    default:
+      // Put default auto code here
+      break;
     }
   }
 
   /**
    * This function is called periodically during operator control.
    */
-  SetMotorToColor setEncoder = new SetMotorToColor();
-  XboxController controller1 = new XboxController(Constants.XBOX_CONTROLLER_1_PORT);
 
   @Override
   public void teleopPeriodic() {
@@ -129,21 +139,25 @@ SetMotorToColor controlPanelSubsystem = new SetMotorToColor();
     if (gameData.length() > 0) {
       switch (gameData.charAt(0)) {
       case 'B':
-        // Blue case code
+        controlPanelSubsystem.targetColor = kBlueTarget;
         SmartDashboard.putString("Blue", "B");
         break;
       case 'G':
+        controlPanelSubsystem.targetColor = kGreenTarget;
+
         // Green case code
         SmartDashboard.putString("Green", "G");
 
         break;
       case 'R':
-        // Red case code
+        controlPanelSubsystem.targetColor = kRedTarget;
+
         SmartDashboard.putString("Red", "R");
 
         break;
       case 'Y':
-        // Yellow case code
+        controlPanelSubsystem.targetColor = kYellowTarget;
+
         SmartDashboard.putString("Yellow", "Y");
 
         break;
@@ -166,7 +180,7 @@ SetMotorToColor controlPanelSubsystem = new SetMotorToColor();
     /**
      * Run the color match algorithm on our detected color
      */
-   
+
   }
 
   /**
