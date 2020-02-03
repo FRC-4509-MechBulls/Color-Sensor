@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
   private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
   private final Color kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
   private final Color kRedTarget = ColorMatch.makeColor(0.531, 0.343, 0.14);
-  private final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+  private final Color kYellowTarget = ColorMatch.makeColor(0.31597, 0.57, 0.11425);
   private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   public static RobotContainer oi;
 
